@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Home Quest RPG - Ta maison gamifiée</title>
+    <style>
+        /* Import Google Fonts - Pixel/Retro style */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+        
+        :root {
+            /* Light theme - Palette Stardew Valley inspirée */
+            --bg-primary: #f4ead5;
+            --bg-secondary: #e8dcc0;
+            --bg-card: #fef9ec;
+            --text-primary: #3d2817;
+            --text-secondary: #6b5d4f;
+            --accent-green: #7cb342;
+            --accent-brown: #8d6e63;
+            --accent-blue: #42a5f5;
+            --accent-gold: #ffd54f;
+            --accent-red: #ef5350;
+            --border-color: #c4b59d;
+            --shadow: rgba(61, 40, 23, 0.15);
+            --glow: rgba(124, 179, 66, 0.3);
+            
+            /* Progress bars */
+            --progress-bg: #d4c5a9;
+            --progress-xp: linear-gradient(90deg, #ffd54f, #ffb300);
+            --progress-zone: linear-gradient(90deg, #7cb342, #558b2f);
+            --progress-streak: linear-gradient(90deg, #ef5350, #d32f2f);
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a1410;
+            --bg-secondary: #2d2419;
+            --bg-card: #3a2e22;
+            --text-primary: #f4ead5;
+            --text-secondary: #c4b59d;
+            --border-color: #6b5d4f;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'VT323', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .pixel-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+        
+        /* Header */
+        header {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .theme-toggle {
+            background: var(--accent-brown);
+            color: white;
+            border: 2px solid var(--text-primary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            border-radius: 4px;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+        
+        .theme-toggle:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        /* Dashboard Stats */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            box-shadow: 4px 4px 0 var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 6px 6px 0 var(--shadow), 0 0 20px var(--glow);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .stat-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            color: var(--accent-gold);
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: var(--progress-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--progress-xp);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .progress-fill.zone {
+            background: var(--progress-zone);
+        }
+        
+        .progress-fill.streak {
+            background: var(--progress-streak);
+        }
+        
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 3px solid var(--border-color);
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .tab-btn:hover {
+            background: var(--accent-green);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            border-color: var(--text-primary);
+            box-shadow: 0 0 10px var(--glow);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Zones Grid */
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .zone-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+        }
+        
+        .zone-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .zone-icon {
+            font-size: 32px;
+        }
+        
+        .zone-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+        }
+        
+        /* Tasks List */
+        .tasks-list {
+            list-style: none;
+            margin-top: var(--spacing-md);
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .task-item:hover {
+            background: var(--accent-green);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-green);
+        }
+        
+        .task-text {
+            flex: 1;
+        }
+        
+        .task-xp {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .task-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        /* Daily Quests */
+        .quests-grid {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+        
+        .quest-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            border: 3px solid var(--accent-gold);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow), 0 0 20px rgba(255, 213, 79, 0.2);
+        }
+        
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .quest-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: var(--accent-gold);
+        }
+        
+        .quest-reward {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        /* Meal Prep */
+        .meal-prep-container {
+            background: var(--bg-card);
+            border: 3px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+        }
+        
+        .meal-sessions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .session-btn {
+            background: var(--bg-secondary);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .session-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .session-btn.completed {
+            background: var(--accent-green);
+            color: white;
+            border-color: var(--accent-green);
+        }
+        
+        /* Loot Shop */
+        .loot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .loot-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+            transition: all 0.3s;
+        }
+        
+        .loot-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 6px 6px 0 var(--shadow), 0 0 30px var(--glow);
+        }
+        
+        .loot-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .loot-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .loot-cost {
+            text-align: center;
+            color: var(--accent-gold);
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .buy-btn {
+            width: 100%;
+            background: var(--accent-green);
+            color: white;
+            border: 3px solid var(--text-primary);
+            padding: var(--spacing-sm);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .buy-btn:hover {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+        
+        .buy-btn:disabled {
+            background: var(--progress-bg);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        /* Pet System */
+        .pet-container {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            border: 3px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: var(--spacing-xl);
+            box-shadow: 4px 4px 0 var(--shadow), 0 0 30px rgba(255, 213, 79, 0.15);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .pet-display {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .pet-sprite {
+            font-size: 120px;
+            display: inline-block;
+            animation: petBounce 2s ease-in-out infinite;
+            filter: drop-shadow(4px 4px 0 var(--shadow));
+        }
+        
+        @keyframes petBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pet-name-input {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            padding: var(--spacing-sm);
+            font-family: 'VT323', monospace;
+            font-size: 24px;
+            text-align: center;
+            border-radius: 4px;
+            color: var(--text-primary);
+            width: 100%;
+            max-width: 300px;
+            margin: var(--spacing-md) auto;
+            display: block;
+        }
+        
+        .pet-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .pet-option {
+            background: var(--bg-secondary);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            font-size: 48px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .pet-option:hover {
+            transform: scale(1.1);
+            background: var(--accent-green);
+        }
+        
+        .pet-option.selected {
+            border-color: var(--accent-gold);
+            background: var(--accent-gold);
+            box-shadow: 0 0 20px var(--glow);
+        }
+        
+        .pet-customization {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+        
+        .custom-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+        }
+        
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .color-btn {
+            width: 100%;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--text-primary);
+        }
+        
+        .color-btn.selected {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px var(--glow);
+        }
+        
+        .accessories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .accessory-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .accessory-item:hover {
+            transform: translateY(-4px);
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .accessory-item.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .accessory-item.equipped {
+            border-color: var(--accent-gold);
+            background: var(--accent-gold);
+        }
+        
+        .accessory-icon {
+            font-size: 32px;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .accessory-cost {
+            font-size: 14px;
+            color: var(--accent-gold);
+        }
+        
+        /* Export Button */
+        .export-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: 3px solid var(--text-primary);
+            padding: var(--spacing-md) var(--spacing-lg);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            margin-top: var(--spacing-lg);
+            display: block;
+            width: 100%;
+        }
+        
+        .export-btn:hover {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px var(--shadow);
+        }
+        
+        /* Stats Page */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .stat-category {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+        }
+        
+        .stat-category h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent-gold);
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pixel-title {
+                font-size: 10px;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .zones-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .meal-sessions {
+                grid-template-columns: 1fr;
+            }
+            
+            .loot-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pet-sprite {
+                font-size: 80px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes levelUp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
+        
+        .level-up-animation {
+            animation: levelUp 0.5s ease;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-green);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 3px solid var(--text-primary);
+            border-radius: 8px;
+            box-shadow: 4px 4px 0 var(--shadow);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+            max-width: 300px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1 class="pixel-title">
+                    <span>🏠</span>
+                    <span>HOME QUEST RPG</span>
+                </h1>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span id="theme-icon">🌙</span> Changer thème
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">⭐ Niveau</span>
+                    <span class="stat-value" id="player-level">1</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="xp-progress" style="width: 0%">
+                        <span id="xp-text">0 / 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">🔥 Streak</span>
+                    <span class="stat-value" id="streak-count">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill streak" id="streak-progress" style="width: 0%">
+                        <span id="streak-text">Meilleur: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">🍳 Meal Prep</span>
+                    <span class="stat-value" id="meal-count">0/2</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="meal-progress" style="width: 0%">
+                        <span>Cette semaine</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">✅ Tâches Aujourd'hui</span>
+                    <span class="stat-value" id="tasks-today">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('quests')">📜 Quêtes</button>
+            <button class="tab-btn" onclick="switchTab('zones')">🗺️ Zones</button>
+            <button class="tab-btn" onclick="switchTab('meal')">🍳 Meal Prep</button>
+            <button class="tab-btn" onclick="switchTab('pet')">🐾 Compagnon</button>
+            <button class="tab-btn" onclick="switchTab('shop')">🎁 Boutique</button>
+            <button class="tab-btn" onclick="switchTab('stats')">📊 Stats</button>
+        </div>
+
+        <!-- Daily Quests Tab -->
+        <div id="tab-quests" class="tab-content active">
+            <div class="quest-card">
+                <div class="quest-header">
+                    <h2 class="quest-title">⚔️ QUÊTES JOURNALIÈRES</h2>
+                    <span class="quest-reward">+<span id="quest-bonus-xp">50</span> XP Bonus</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="daily-quest-progress" style="width: 0%">
+                        <span id="daily-quest-text">0 / 5</span>
+                    </div>
+                </div>
+                <ul class="tasks-list" id="daily-quests-list">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Zones Tab -->
+        <div id="tab-zones" class="tab-content">
+            <div class="zones-grid" id="zones-container">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Meal Prep Tab -->
+        <div id="tab-meal" class="tab-content">
+            <div class="meal-prep-container">
+                <h2 class="pixel-title">🍳 MEAL PREP HEBDOMADAIRE</h2>
+                <p style="margin-top: 16px;">Complète 2 sessions de meal prep cette semaine pour +20 XP bonus !</p>
+                <div class="meal-sessions">
+                    <div class="session-btn" id="meal-session-1" onclick="completeMealSession(1)">
+                        <div style="font-size: 48px; margin-bottom: 8px;">🥘</div>
+                        <div class="pixel-title" style="font-size: 10px;">Session 1</div>
+                        <div style="margin-top: 8px;">+30 XP</div>
+                    </div>
+                    <div class="session-btn" id="meal-session-2" onclick="completeMealSession(2)">
+                        <div style="font-size: 48px; margin-bottom: 8px;">🍱</div>
+                        <div class="pixel-title" style="font-size: 10px;">Session 2</div>
+                        <div style="margin-top: 8px;">+30 XP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pet Tab -->
+        <div id="tab-pet" class="tab-content">
+            <div class="pet-container">
+                <h2 class="pixel-title" style="text-align: center; margin-bottom: 24px;">🐾 TON COMPAGNON</h2>
+                
+                <div class="pet-display">
+                    <div class="pet-sprite" id="pet-sprite">🐱</div>
+                    <input type="text" class="pet-name-input" id="pet-name" placeholder="Nom de ton compagnon" maxlength="20">
+                </div>
+
+                <div class="pet-customization">
+                    <div class="custom-section">
+                        <h3 class="pixel-title" style="font-size: 10px;">Choisis ton animal</h3>
+                        <div class="pet-selection">
+                            <div class="pet-option selected" onclick="selectPet('🐱')">🐱</div>
+                            <div class="pet-option" onclick="selectPet('🐶')">🐶</div>
+                            <div class="pet-option" onclick="selectPet('🐰')">🐰</div>
+                            <div class="pet-option" onclick="selectPet('🐻')">🐻</div>
+                            <div class="pet-option" onclick="selectPet('🦊')">🦊</div>
+                            <div class="pet-option" onclick="selectPet('🐼')">🐼</div>
+                        </div>
+                    </div>
+
+                    <div class="custom-section">
+                        <h3 class="pixel-title" style="font-size: 10px;">Nourrir ton compagnon (Coût: 50 XP)</h3>
+                        <button class="buy-btn" onclick="feedPet()">🍖 Donner à manger</button>
+                        <div style="margin-top: 8px; text-align: center;">Repas donnés: <span id="pet-fed-count">0</span></div>
+                    </div>
+
+                    <div class="custom-section">
+                        <h3 class="pixel-title" style="font-size: 10px;">Accessoires (Débloquer avec XP)</h3>
+                        <div class="accessories-grid" id="pet-accessories">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Tab -->
+        <div id="tab-shop" class="tab-content">
+            <h2 class="pixel-title" style="margin-bottom: 24px;">🎁 BOUTIQUE DE RÉCOMPENSES</h2>
+            <div class="loot-grid" id="loot-shop">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="tab-stats" class="tab-content">
+            <h2 class="pixel-title" style="margin-bottom: 24px;">📊 TES STATISTIQUES</h2>
+            <div class="stats-grid">
+                <div class="stat-category">
+                    <h3>⚔️ Général</h3>
+                    <div class="stat-row">
+                        <span>Total XP gagné</span>
+                        <span id="total-xp-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Niveau actuel</span>
+                        <span id="level-stat">1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Tâches complétées</span>
+                        <span id="total-tasks-stat">0</span>
+                    </div>
+                </div>
+
+                <div class="stat-category">
+                    <h3>🔥 Streaks</h3>
+                    <div class="stat-row">
+                        <span>Streak actuel</span>
+                        <span id="current-streak-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Meilleur streak</span>
+                        <span id="longest-streak-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Dernière activité</span>
+                        <span id="last-active-stat">Jamais</span>
+                    </div>
+                </div>
+
+                <div class="stat-category">
+                    <h3>🍳 Meal Prep</h3>
+                    <div class="stat-row">
+                        <span>Sessions complétées</span>
+                        <span id="meal-prep-total-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Cette semaine</span>
+                        <span id="meal-prep-week-stat">0 / 2</span>
+                    </div>
+                </div>
+
+                <div class="stat-category">
+                    <h3>🎁 Récompenses</h3>
+                    <div class="stat-row">
+                        <span>Loot achetés</span>
+                        <span id="loot-bought-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>XP dépensé</span>
+                        <span id="xp-spent-stat">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="export-btn" onclick="exportStats()">
+                📥 Exporter mes statistiques (JSON)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STRUCTURE ====================
+        
+        const ZONES_DATA = {
+            chambre: {
+                name: "🛏️ Chambre",
+                icon: "🛏️",
+                tasks: {
+                    daily: [
+                        { id: "bed", name: "Faire le lit", xp: 5 },
+                        { id: "air", name: "Aérer la pièce", xp: 5 },
+                        { id: "clothes", name: "Ramasser vêtements", xp: 5 },
+                        { id: "laundry", name: "Mettre linge au panier", xp: 5 },
+                        { id: "trash", name: "Vider déchets", xp: 5 },
+                        { id: "surfaces", name: "Ranger surfaces", xp: 10 },
+                        { id: "desk", name: "Ranger bureau", xp: 10 },
+                        { id: "nightstand", name: "Ranger table de nuit", xp: 5 }
+                    ],
+                    weekly: [
+                        { id: "vacuum", name: "Aspirer le sol", xp: 15 },
+                        { id: "dust", name: "Faire la poussière", xp: 10 },
+                        { id: "sheets", name: "Changer les draps", xp: 15 },
+                        { id: "bin", name: "Vider poubelle", xp: 5 },
+                        { id: "sort", name: "Trier vêtements", xp: 10 }
+                    ],
+                    monthly: [
+                        { id: "under-bed", name: "Nettoyer sous le lit", xp: 20 },
+                        { id: "seasonal", name: "Ranger vêtements saison", xp: 20 },
+                        { id: "switches", name: "Nettoyer interrupteurs", xp: 10 },
+                        { id: "handles", name: "Nettoyer poignées", xp: 10 },
+                        { id: "papers", name: "Trier papiers/documents", xp: 15 }
+                    ]
+                }
+            },
+            cuisine: {
+                name: "🍳 Cuisine",
+                icon: "🍳",
+                tasks: {
+                    daily: [
+                        { id: "dishes", name: "Faire la vaisselle", xp: 10 },
+                        { id: "sink", name: "Nettoyer évier", xp: 5 },
+                        { id: "counter", name: "Nettoyer plan de travail", xp: 10 },
+                        { id: "table", name: "Nettoyer table", xp: 5 },
+                        { id: "food", name: "Ranger nourriture", xp: 5 },
+                        { id: "leftovers", name: "Vérifier restes", xp: 5 }
+                    ],
+                    weekly: [
+                        { id: "microwave", name: "Nettoyer micro-ondes", xp: 10 },
+                        { id: "stove", name: "Nettoyer plaques", xp: 15 },
+                        { id: "deep-sink", name: "Détartrer évier", xp: 10 },
+                        { id: "check-food", name: "Trier aliments périmés", xp: 10 },
+                        { id: "bins", name: "Vider poubelles", xp: 5 }
+                    ],
+                    monthly: [
+                        { id: "oven", name: "Nettoyer four", xp: 25 },
+                        { id: "fridge", name: "Nettoyer frigo", xp: 20 },
+                        { id: "freezer", name: "Dégivrer congélateur", xp: 25 },
+                        { id: "cabinets", name: "Trier placards", xp: 20 },
+                        { id: "big-bin", name: "Nettoyer poubelle", xp: 10 }
+                    ]
+                }
+            },
+            salleBain: {
+                name: "🚿 Salle de bain",
+                icon: "🚿",
+                tasks: {
+                    daily: [
+                        { id: "sink", name: "Nettoyer lavabo", xp: 5 },
+                        { id: "mirror", name: "Nettoyer miroir", xp: 5 },
+                        { id: "laundry", name: "Mettre linge au panier", xp: 5 },
+                        { id: "bin", name: "Vider poubelle", xp: 5 }
+                    ],
+                    weekly: [
+                        { id: "shower", name: "Nettoyer douche/baignoire", xp: 15 },
+                        { id: "toilet", name: "Nettoyer toilettes", xp: 10 },
+                        { id: "deep-mirror", name: "Nettoyer miroir à fond", xp: 5 },
+                        { id: "floor", name: "Laver le sol", xp: 15 },
+                        { id: "towels", name: "Changer serviettes", xp: 10 }
+                    ],
+                    monthly: [
+                        { id: "descale", name: "Détartrer robinet/douche", xp: 20 },
+                        { id: "joints", name: "Nettoyer joints", xp: 20 },
+                        { id: "products", name: "Trier produits", xp: 10 }
+                    ]
+                }
+            },
+            linge: {
+                name: "👕 Linge",
+                icon: "👕",
+                tasks: {
+                    weekly: [
+                        { id: "sort", name: "Trier le linge", xp: 10 },
+                        { id: "wash", name: "Lancer machine", xp: 10 },
+                        { id: "hang", name: "Étendre le linge", xp: 10 },
+                        { id: "dry", name: "Récupérer linge sec", xp: 5 },
+                        { id: "fold", name: "Plier le linge", xp: 15 },
+                        { id: "store", name: "Ranger le linge", xp: 10 }
+                    ]
+                }
+            },
+            salon: {
+                name: "🛋️ Salon",
+                icon: "🛋️",
+                tasks: {
+                    daily: [
+                        { id: "items", name: "Ranger objets", xp: 10 },
+                        { id: "textiles", name: "Plier couvertures/coussins", xp: 5 },
+                        { id: "trash", name: "Jeter déchets", xp: 5 }
+                    ],
+                    weekly: [
+                        { id: "vacuum", name: "Aspirer le sol", xp: 15 },
+                        { id: "dust", name: "Faire la poussière", xp: 10 },
+                        { id: "coffee-table", name: "Nettoyer table basse", xp: 5 },
+                        { id: "screens", name: "Nettoyer écrans", xp: 10 }
+                    ]
+                }
+            },
+            administratif: {
+                name: "📋 Administratif",
+                icon: "📋",
+                tasks: {
+                    weekly: [
+                        { id: "mail", name: "Trier courrier", xp: 10 },
+                        { id: "bills", name: "Vérifier factures", xp: 15 },
+                        { id: "docs", name: "Ranger documents", xp: 10 }
+                    ],
+                    monthly: [
+                        { id: "paperwork", name: "Archiver papiers", xp: 20 },
+                        { id: "digital", name: "Organiser fichiers PC", xp: 15 }
+                    ]
+                }
+            },
+            maison: {
+                name: "🏠 Entretien Global",
+                icon: "🏠",
+                tasks: {
+                    monthly: [
+                        { id: "baseboards", name: "Nettoyer plinthes", xp: 20 },
+                        { id: "doors", name: "Nettoyer portes", xp: 15 },
+                        { id: "walls", name: "Nettoyer murs", xp: 20 }
+                    ],
+                    seasonal: [
+                        { id: "windows", name: "Nettoyer vitres", xp: 30 },
+                        { id: "curtains", name: "Laver rideaux", xp: 25 },
+                        { id: "mattress", name: "Aspirer matelas", xp: 20 },
+                        { id: "couch", name: "Nettoyer canapé", xp: 25 },
+                        { id: "behind", name: "Derrière meubles", xp: 30 },
+                        { id: "lights", name: "Nettoyer luminaires", xp: 20 },
+                        { id: "ventilation", name: "Nettoyer ventilation", xp: 20 }
+                    ]
+                }
+            }
+        };
+
+        const LOOT_SHOP = [
+            { id: "snack", name: "Snack préféré", icon: "🍫", cost: 50, category: "petit" },
+            { id: "episode", name: "Épisode série", icon: "📺", cost: 80, category: "petit" },
+            { id: "bath", name: "Bain relaxant", icon: "🛁", cost: 100, category: "petit" },
+            { id: "coffee", name: "Café fancy", icon: "☕", cost: 60, category: "petit" },
+            
+            { id: "accessory", name: "Petit accessoire", icon: "✨", cost: 200, category: "moyen" },
+            { id: "outing", name: "Sortie chill", icon: "🎬", cost: 250, category: "moyen" },
+            { id: "deco", name: "Objet déco", icon: "🖼️", cost: 300, category: "moyen" },
+            { id: "game", name: "Nouveau jeu", icon: "🎮", cost: 350, category: "moyen" },
+            
+            { id: "clothes", name: "Vêtement neuf", icon: "👕", cost: 500, category: "boss" },
+            { id: "day-off", name: "Journée off totale", icon: "🏖️", cost: 600, category: "boss" },
+            { id: "special", name: "Sortie spéciale", icon: "🎉", cost: 700, category: "boss" },
+            { id: "tech", name: "Gadget tech", icon: "📱", cost: 800, category: "boss" }
+        ];
+
+        const PET_ACCESSORIES = [
+            { id: "hat", name: "Chapeau", icon: "🎩", cost: 100, unlocked: false },
+            { id: "glasses", name: "Lunettes", icon: "🕶️", cost: 150, unlocked: false },
+            { id: "bow", name: "Nœud", icon: "🎀", cost: 120, unlocked: false },
+            { id: "crown", name: "Couronne", icon: "👑", cost: 200, unlocked: false },
+            { id: "scarf", name: "Écharpe", icon: "🧣", cost: 180, unlocked: false },
+            { id: "medal", name: "Médaille", icon: "🏅", cost: 250, unlocked: false }
+        ];
+
+        // ==================== GAME STATE ====================
+        
+        let gameState = {
+            player: {
+                level: 1,
+                currentXP: 0,
+                totalXP: 0,
+                xpToNextLevel: 100
+            },
+            streak: {
+                current: 0,
+                longest: 0,
+                lastActiveDate: null
+            },
+            mealPrep: {
+                session1: false,
+                session2: false,
+                weekStart: null,
+                totalCompleted: 0
+            },
+            tasks: {
+                completed: {},
+                totalCompleted: 0,
+                todayCount: 0,
+                lastResetDate: null
+            },
+            dailyQuests: {
+                quests: [],
+                completed: 0,
+                generatedDate: null
+            },
+            pet: {
+                type: "🐱",
+                name: "Minou",
+                fedCount: 0,
+                accessories: [],
+                unlockedAccessories: []
+            },
+            shop: {
+                purchased: [],
+                totalSpent: 0
+            },
+            settings: {
+                theme: "light"
+            }
+        };
+
+        // ==================== INITIALIZATION ====================
+        
+        function init() {
+            loadGameState();
+            checkAndResetDaily();
+            checkAndResetWeekly();
+            generateDailyQuests();
+            updateUI();
+            renderZones();
+            renderDailyQuests();
+            renderLootShop();
+            renderPetAccessories();
+            updateAllStats();
+        }
+
+        function loadGameState() {
+            const saved = localStorage.getItem('homeQuestRPG');
+            if (saved) {
+                try {
+                    const loaded = JSON.parse(saved);
+                    gameState = { ...gameState, ...loaded };
+                    
+                    // Apply theme
+                    if (gameState.settings.theme === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        document.getElementById('theme-icon').textContent = '☀️';
+                    }
+                } catch (e) {
+                    console.error('Error loading save:', e);
+                }
+            }
+        }
+
+        function saveGameState() {
+            localStorage.setItem('homeQuestRPG', JSON.stringify(gameState));
+        }
+
+        // ==================== DAILY/WEEKLY RESET ====================
+        
+        function checkAndResetDaily() {
+            const today = new Date().toDateString();
+            
+            // Reset daily tasks
+            if (gameState.tasks.lastResetDate !== today) {
+                // Check streak
+                const lastDate = gameState.tasks.lastResetDate ? new Date(gameState.tasks.lastResetDate) : null;
+                const todayDate = new Date();
+                
+                if (lastDate) {
+                    const diffTime = todayDate - lastDate;
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays === 1) {
+                        // Streak continues
+                    } else if (diffDays > 1) {
+                        // Streak broken
+                        gameState.streak.current = 0;
+                    }
+                }
+                
+                // Reset daily tasks completion
+                const newCompleted = {};
+                for (let zone in gameState.tasks.completed) {
+                    newCompleted[zone] = {};
+                    for (let taskId in gameState.tasks.completed[zone]) {
+                        const taskType = getTaskType(zone, taskId);
+                        if (taskType !== 'daily') {
+                            newCompleted[zone][taskId] = gameState.tasks.completed[zone][taskId];
+                        }
+                    }
+                }
+                gameState.tasks.completed = newCompleted;
+                gameState.tasks.todayCount = 0;
+                gameState.tasks.lastResetDate = today;
+                
+                // Reset daily quests
+                gameState.dailyQuests.completed = 0;
+                generateDailyQuests();
+                
+                saveGameState();
+            }
+        }
+
+        function checkAndResetWeekly() {
+            const now = new Date();
+            const weekStart = gameState.mealPrep.weekStart ? new Date(gameState.mealPrep.weekStart) : null;
+            
+            if (!weekStart || now - weekStart > 7 * 24 * 60 * 60 * 1000) {
+                gameState.mealPrep.session1 = false;
+                gameState.mealPrep.session2 = false;
+                gameState.mealPrep.weekStart = now.toISOString();
+                saveGameState();
+            }
+        }
+
+        function getTaskType(zoneId, taskId) {
+            const zone = ZONES_DATA[zoneId];
+            if (!zone) return null;
+            
+            for (let type of ['daily', 'weekly', 'monthly', 'seasonal']) {
+                if (zone.tasks[type]) {
+                    const task = zone.tasks[type].find(t => t.id === taskId);
+                    if (task) return type;
+                }
+            }
+            return null;
+        }
+
+        // ==================== DAILY QUESTS SYSTEM ====================
+        
+        function generateDailyQuests() {
+            const today = new Date().toDateString();
+            
+            if (gameState.dailyQuests.generatedDate === today) {
+                return; // Already generated today
+            }
+            
+            // Intelligent quest generation based on player habits
+            const allTasks = [];
+            
+            // Collect daily tasks (high priority)
+            for (let zoneId in ZONES_DATA) {
+                const zone = ZONES_DATA[zoneId];
+                if (zone.tasks.daily) {
+                    zone.tasks.daily.forEach(task => {
+                        allTasks.push({
+                            zoneId,
+                            zoneName: zone.name,
+                            ...task,
+                            type: 'daily',
+                            priority: 3
+                        });
+                    });
+                }
+            }
+            
+            // Add some weekly tasks (medium priority)
+            for (let zoneId in ZONES_DATA) {
+                const zone = ZONES_DATA[zoneId];
+                if (zone.tasks.weekly) {
+                    zone.tasks.weekly.forEach(task => {
+                        allTasks.push({
+                            zoneId,
+                            zoneName: zone.name,
+                            ...task,
+                            type: 'weekly',
+                            priority: 2
+                        });
+                    });
+                }
+            }
+            
+            // Intelligent selection: prioritize tasks player hasn't done recently
+            const taskCompletionHistory = {};
+            for (let zoneId in gameState.tasks.completed) {
+                for (let taskId in gameState.tasks.completed[zoneId]) {
+                    taskCompletionHistory[`${zoneId}-${taskId}`] = gameState.tasks.completed[zoneId][taskId];
+                }
+            }
+            
+            // Score tasks based on priority and completion history
+            allTasks.forEach(task => {
+                const key = `${task.zoneId}-${task.id}`;
+                const lastCompleted = taskCompletionHistory[key] || 0;
+                const daysSince = lastCompleted ? Math.floor((Date.now() - lastCompleted) / (1000 * 60 * 60 * 24)) : 999;
+                
+                task.score = task.priority * 100 + daysSince;
+            });
+            
+            // Sort by score and select top 5
+            allTasks.sort((a, b) => b.score - a.score);
+            gameState.dailyQuests.quests = allTasks.slice(0, 5);
+            gameState.dailyQuests.completed = 0;
+            gameState.dailyQuests.generatedDate = today;
+            
+            saveGameState();
+        }
+
+        function renderDailyQuests() {
+            const container = document.getElementById('daily-quests-list');
+            container.innerHTML = '';
+            
+            gameState.dailyQuests.quests.forEach((quest, index) => {
+                const isCompleted = gameState.tasks.completed[quest.zoneId]?.[quest.id];
+                
+                const li = document.createElement('li');
+                li.className = `task-item ${isCompleted ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" 
+                           ${isCompleted ? 'checked' : ''} 
+                           onchange="completeQuestTask('${quest.zoneId}', '${quest.id}', ${quest.xp})">
+                    <span class="task-text">
+                        ${quest.zoneName.split(' ')[0]} ${quest.name}
+                    </span>
+                    <span class="task-xp">+${quest.xp} XP</span>
+                `;
+                container.appendChild(li);
+            });
+            
+            updateQuestProgress();
+        }
+
+        function completeQuestTask(zoneId, taskId, xp) {
+            completeTask(zoneId, taskId, xp);
+            
+            // Check if all quests completed
+            let completedCount = 0;
+            gameState.dailyQuests.quests.forEach(quest => {
+                if (gameState.tasks.completed[quest.zoneId]?.[quest.id]) {
+                    completedCount++;
+                }
+            });
+            
+            gameState.dailyQuests.completed = completedCount;
+            
+            if (completedCount === gameState.dailyQuests.quests.length) {
+                // All quests completed! Bonus XP
+                const bonusXP = 50;
+                addXP(bonusXP);
+                showNotification(`🎉 Toutes les quêtes complétées ! +${bonusXP} XP Bonus !`);
+            }
+            
+            updateQuestProgress();
+            saveGameState();
+        }
+
+        function updateQuestProgress() {
+            let completed = 0;
+            gameState.dailyQuests.quests.forEach(quest => {
+                if (gameState.tasks.completed[quest.zoneId]?.[quest.id]) {
+                    completed++;
+                }
+            });
+            
+            const total = gameState.dailyQuests.quests.length;
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+            
+            document.getElementById('daily-quest-progress').style.width = percentage + '%';
+            document.getElementById('daily-quest-text').textContent = `${completed} / ${total}`;
+        }
+
+        // ==================== XP & LEVELING ====================
+        
+        function addXP(amount) {
+            gameState.player.currentXP += amount;
+            gameState.player.totalXP += amount;
+            
+            // Check for level up
+            while (gameState.player.currentXP >= gameState.player.xpToNextLevel) {
+                levelUp();
+            }
+            
+            updateUI();
+            saveGameState();
+        }
+
+        function levelUp() {
+            gameState.player.currentXP -= gameState.player.xpToNextLevel;
+            gameState.player.level++;
+            gameState.player.xpToNextLevel = Math.floor(gameState.player.xpToNextLevel * 1.5);
+            
+            showNotification(`🎉 LEVEL UP ! Niveau ${gameState.player.level} atteint !`);
+            
+            // Animation
+            document.getElementById('player-level').classList.add('level-up-animation');
+            setTimeout(() => {
+                document.getElementById('player-level').classList.remove('level-up-animation');
+            }, 500);
+        }
+
+        // ==================== TASKS ====================
+        
+        function completeTask(zoneId, taskId, xp) {
+            if (!gameState.tasks.completed[zoneId]) {
+                gameState.tasks.completed[zoneId] = {};
+            }
+            
+            const isCompleted = gameState.tasks.completed[zoneId][taskId];
+            
+            if (!isCompleted) {
+                gameState.tasks.completed[zoneId][taskId] = Date.now();
+                gameState.tasks.totalCompleted++;
+                gameState.tasks.todayCount++;
+                
+                // Update streak
+                const today = new Date().toDateString();
+                if (gameState.streak.lastActiveDate !== today) {
+                    gameState.streak.current++;
+                    gameState.streak.lastActiveDate = today;
+                    
+                    if (gameState.streak.current > gameState.streak.longest) {
+                        gameState.streak.longest = gameState.streak.current;
+                    }
+                    
+                    // Streak bonus
+                    const streakBonus = getStreakBonus(gameState.streak.current);
+                    if (streakBonus > 0) {
+                        showNotification(`🔥 Streak ${gameState.streak.current} jours ! +${streakBonus} XP Bonus !`);
+                        xp += streakBonus;
+                    }
+                }
+                
+                addXP(xp);
+                showNotification(`✅ Tâche complétée ! +${xp} XP`);
+            } else {
+                delete gameState.tasks.completed[zoneId][taskId];
+                gameState.tasks.totalCompleted--;
+                gameState.tasks.todayCount--;
+            }
+            
+            renderZones();
+            renderDailyQuests();
+            updateUI();
+            saveGameState();
+        }
+
+        function getStreakBonus(streakDays) {
+            if (streakDays >= 30) return 100;
+            if (streakDays >= 7) return 30;
+            if (streakDays >= 3) return 10;
+            return 0;
+        }
+
+        // ==================== MEAL PREP ====================
+        
+        function completeMealSession(sessionNum) {
+            const sessionKey = `session${sessionNum}`;
+            
+            if (!gameState.mealPrep[sessionKey]) {
+                gameState.mealPrep[sessionKey] = true;
+                gameState.mealPrep.totalCompleted++;
+                
+                const xp = 30;
+                addXP(xp);
+                showNotification(`🍳 Meal Prep Session ${sessionNum} complétée ! +${xp} XP`);
+                
+                // Check if both sessions completed
+                if (gameState.mealPrep.session1 && gameState.mealPrep.session2) {
+                    const bonusXP = 20;
+                    addXP(bonusXP);
+                    showNotification(`🎉 2 sessions meal prep ! +${bonusXP} XP Bonus !`);
+                }
+                
+                // Update streak
+                const today = new Date().toDateString();
+                if (gameState.streak.lastActiveDate !== today) {
+                    gameState.streak.current++;
+                    gameState.streak.lastActiveDate = today;
+                    
+                    if (gameState.streak.current > gameState.streak.longest) {
+                        gameState.streak.longest = gameState.streak.current;
+                    }
+                }
+                
+                updateUI();
+                saveGameState();
+            }
+        }
+
+        // ==================== PET SYSTEM ====================
+        
+        function selectPet(emoji) {
+            gameState.pet.type = emoji;
+            document.getElementById('pet-sprite').textContent = emoji;
+            
+            // Update selection UI
+            document.querySelectorAll('.pet-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.textContent === emoji) {
+                    opt.classList.add('selected');
+                }
+            });
+            
+            saveGameState();
+        }
+
+        function feedPet() {
+            const cost = 50;
+            if (gameState.player.currentXP >= cost) {
+                gameState.player.currentXP -= cost;
+                gameState.pet.fedCount++;
+                
+                showNotification(`🍖 ${gameState.pet.name} a mangé ! Miam !`);
+                
+                // Animation
+                const sprite = document.getElementById('pet-sprite');
+                sprite.style.animation = 'none';
+                setTimeout(() => {
+                    sprite.style.animation = 'petBounce 2s ease-in-out infinite';
+                }, 10);
+                
+                document.getElementById('pet-fed-count').textContent = gameState.pet.fedCount;
+                updateUI();
+                saveGameState();
+            } else {
+                showNotification(`❌ Pas assez de XP ! (${cost} XP nécessaires)`);
+            }
+        }
+
+        function toggleAccessory(accessoryId, cost) {
+            const index = gameState.pet.accessories.indexOf(accessoryId);
+            
+            if (index === -1) {
+                // Equip accessory
+                if (!gameState.pet.unlockedAccessories.includes(accessoryId)) {
+                    // Need to unlock first
+                    if (gameState.player.currentXP >= cost) {
+                        gameState.player.currentXP -= cost;
+                        gameState.pet.unlockedAccessories.push(accessoryId);
+                        gameState.pet.accessories.push(accessoryId);
+                        showNotification(`✨ Accessoire débloqué et équipé !`);
+                    } else {
+                        showNotification(`❌ Pas assez de XP ! (${cost} XP nécessaires)`);
+                        return;
+                    }
+                } else {
+                    gameState.pet.accessories.push(accessoryId);
+                }
+            } else {
+                // Unequip accessory
+                gameState.pet.accessories.splice(index, 1);
+            }
+            
+            renderPetAccessories();
+            updateUI();
+            saveGameState();
+        }
+
+        function renderPetAccessories() {
+            const container = document.getElementById('pet-accessories');
+            container.innerHTML = '';
+            
+            PET_ACCESSORIES.forEach(acc => {
+                const isUnlocked = gameState.pet.unlockedAccessories.includes(acc.id);
+                const isEquipped = gameState.pet.accessories.includes(acc.id);
+                
+                const div = document.createElement('div');
+                div.className = `accessory-item ${!isUnlocked ? 'locked' : ''} ${isEquipped ? 'equipped' : ''}`;
+                div.onclick = () => {
+                    if (isUnlocked || gameState.player.currentXP >= acc.cost) {
+                        toggleAccessory(acc.id, acc.cost);
+                    }
+                };
+                
+                div.innerHTML = `
+                    <div class="accessory-icon">${acc.icon}</div>
+                    <div>${acc.name}</div>
+                    ${!isUnlocked ? `<div class="accessory-cost">${acc.cost} XP</div>` : ''}
+                    ${isEquipped ? '<div>✓ Équipé</div>' : ''}
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        // Update pet name
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameInput = document.getElementById('pet-name');
+            if (nameInput) {
+                nameInput.value = gameState.pet.name;
+                nameInput.addEventListener('change', (e) => {
+                    gameState.pet.name = e.target.value || 'Minou';
+                    saveGameState();
+                });
+            }
+        });
+
+        // ==================== LOOT SHOP ====================
+        
+        function buyLoot(lootId, cost) {
+            if (gameState.player.currentXP >= cost) {
+                gameState.player.currentXP -= cost;
+                gameState.shop.purchased.push({
+                    id: lootId,
+                    date: Date.now()
+                });
+                gameState.shop.totalSpent += cost;
+                
+                const loot = LOOT_SHOP.find(l => l.id === lootId);
+                showNotification(`🎁 ${loot.name} acheté ! Profite bien !`);
+                
+                updateUI();
+                saveGameState();
+            } else {
+                showNotification(`❌ Pas assez de XP ! (${cost} XP nécessaires)`);
+            }
+        }
+
+        function renderLootShop() {
+            const container = document.getElementById('loot-shop');
+            container.innerHTML = '';
+            
+            LOOT_SHOP.forEach(loot => {
+                const canAfford = gameState.player.currentXP >= loot.cost;
+                
+                const div = document.createElement('div');
+                div.className = 'loot-card';
+                div.innerHTML = `
+                    <div class="loot-icon">${loot.icon}</div>
+                    <div class="loot-name">${loot.name}</div>
+                    <div class="loot-cost">${loot.cost} XP</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${Math.min((gameState.player.currentXP / loot.cost) * 100, 100)}%"></div>
+                    </div>
+                    <button class="buy-btn" ${!canAfford ? 'disabled' : ''} onclick="buyLoot('${loot.id}', ${loot.cost})">
+                        Acheter
+                    </button>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        // ==================== ZONES RENDERING ====================
+        
+        function renderZones() {
+            const container = document.getElementById('zones-container');
+            container.innerHTML = '';
+            
+            for (let zoneId in ZONES_DATA) {
+                const zone = ZONES_DATA[zoneId];
+                const div = document.createElement('div');
+                div.className = 'zone-card';
+                
+                let totalTasks = 0;
+                let completedTasks = 0;
+                
+                let tasksHTML = '';
+                for (let type of ['daily', 'weekly', 'monthly', 'seasonal']) {
+                    if (zone.tasks[type]) {
+                        const typeLabel = {
+                            daily: '📅 Quotidien',
+                            weekly: '📆 Hebdomadaire',
+                            monthly: '🗓️ Mensuel',
+                            seasonal: '🌸 Saisonnier'
+                        }[type];
+                        
+                        tasksHTML += `<div style="margin-top: 16px; font-weight: bold; color: var(--accent-gold);">${typeLabel}</div>`;
+                        
+                        zone.tasks[type].forEach(task => {
+                            totalTasks++;
+                            const isCompleted = gameState.tasks.completed[zoneId]?.[task.id];
+                            if (isCompleted) completedTasks++;
+                            
+                            tasksHTML += `
+                                <li class="task-item ${isCompleted ? 'completed' : ''}">
+                                    <input type="checkbox" class="task-checkbox" 
+                                           ${isCompleted ? 'checked' : ''} 
+                                           onchange="completeTask('${zoneId}', '${task.id}', ${task.xp})">
+                                    <span class="task-text">${task.name}</span>
+                                    <span class="task-xp">+${task.xp} XP</span>
+                                </li>
+                            `;
+                        });
+                    }
+                }
+                
+                const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+                
+                div.innerHTML = `
+                    <div class="zone-header">
+                        <span class="zone-icon">${zone.icon}</span>
+                        <h3 class="zone-title">${zone.name}</h3>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill zone" style="width: ${progress}%">
+                            ${Math.round(progress)}%
+                        </div>
+                    </div>
+                    <ul class="tasks-list">
+                        ${tasksHTML}
+                    </ul>
+                `;
+                
+                container.appendChild(div);
+            }
+        }
+
+        // ==================== UI UPDATES ====================
+        
+        function updateUI() {
+            // Player level & XP
+            document.getElementById('player-level').textContent = gameState.player.level;
+            const xpPercent = (gameState.player.currentXP / gameState.player.xpToNextLevel) * 100;
+            document.getElementById('xp-progress').style.width = xpPercent + '%';
+            document.getElementById('xp-text').textContent = `${Math.floor(gameState.player.currentXP)} / ${gameState.player.xpToNextLevel}`;
+            
+            // Streak
+            document.getElementById('streak-count').textContent = gameState.streak.current;
+            const streakPercent = Math.min((gameState.streak.current / 30) * 100, 100);
+            document.getElementById('streak-progress').style.width = streakPercent + '%';
+            document.getElementById('streak-text').textContent = `Meilleur: ${gameState.streak.longest}`;
+            
+            // Meal Prep
+            const mealCount = (gameState.mealPrep.session1 ? 1 : 0) + (gameState.mealPrep.session2 ? 1 : 0);
+            document.getElementById('meal-count').textContent = `${mealCount}/2`;
+            document.getElementById('meal-progress').style.width = (mealCount / 2) * 100 + '%';
+            
+            // Update meal session buttons
+            if (gameState.mealPrep.session1) {
+                document.getElementById('meal-session-1').classList.add('completed');
+            }
+            if (gameState.mealPrep.session2) {
+                document.getElementById('meal-session-2').classList.add('completed');
+            }
+            
+            // Tasks today
+            document.getElementById('tasks-today').textContent = gameState.tasks.todayCount;
+            
+            // Pet
+            document.getElementById('pet-sprite').textContent = gameState.pet.type;
+            document.getElementById('pet-name').value = gameState.pet.name;
+            document.getElementById('pet-fed-count').textContent = gameState.pet.fedCount;
+            
+            // Update loot shop progress bars
+            renderLootShop();
+        }
+
+        function updateAllStats() {
+            document.getElementById('total-xp-stat').textContent = Math.floor(gameState.player.totalXP);
+            document.getElementById('level-stat').textContent = gameState.player.level;
+            document.getElementById('total-tasks-stat').textContent = gameState.tasks.totalCompleted;
+            
+            document.getElementById('current-streak-stat').textContent = gameState.streak.current;
+            document.getElementById('longest-streak-stat').textContent = gameState.streak.longest;
+            document.getElementById('last-active-stat').textContent = gameState.streak.lastActiveDate || 'Jamais';
+            
+            document.getElementById('meal-prep-total-stat').textContent = gameState.mealPrep.totalCompleted;
+            const mealThisWeek = (gameState.mealPrep.session1 ? 1 : 0) + (gameState.mealPrep.session2 ? 1 : 0);
+            document.getElementById('meal-prep-week-stat').textContent = `${mealThisWeek} / 2`;
+            
+            document.getElementById('loot-bought-stat').textContent = gameState.shop.purchased.length;
+            document.getElementById('xp-spent-stat').textContent = gameState.shop.totalSpent;
+        }
+
+        // ==================== TAB NAVIGATION ====================
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            // Activate button
+            event.target.classList.add('active');
+        }
+
+        // ==================== THEME TOGGLE ====================
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            
+            gameState.settings.theme = newTheme;
+            saveGameState();
+        }
+
+        // ==================== EXPORT STATS ====================
+        
+        function exportStats() {
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                player: gameState.player,
+                streak: gameState.streak,
+                tasks: {
+                    totalCompleted: gameState.tasks.totalCompleted,
+                    todayCount: gameState.tasks.todayCount
+                },
+                mealPrep: {
+                    totalCompleted: gameState.mealPrep.totalCompleted,
+                    thisWeek: (gameState.mealPrep.session1 ? 1 : 0) + (gameState.mealPrep.session2 ? 1 : 0)
+                },
+                shop: gameState.shop,
+                pet: gameState.pet
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `home-quest-stats-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            
+            showNotification('📥 Statistiques exportées !');
+        }
+
+        // ==================== NOTIFICATIONS ====================
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // ==================== START APP ====================
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
