@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Admin Quest RPG - Tes démarches gamifiées</title>
+    <style>
+        /* Import Google Fonts - Pixel/Retro style */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+        
+        :root {
+            /* Light theme - Palette Stardew Valley inspirée */
+            --bg-primary: #e8f4f8;
+            --bg-secondary: #d4e8f0;
+            --bg-card: #f9fcff;
+            --text-primary: #1a3a4a;
+            --text-secondary: #4a6a7a;
+            --accent-blue: #42a5f5;
+            --accent-purple: #7e57c2;
+            --accent-green: #66bb6a;
+            --accent-gold: #ffc107;
+            --accent-red: #ef5350;
+            --border-color: #b0c4d4;
+            --shadow: rgba(26, 58, 74, 0.15);
+            --glow: rgba(66, 165, 245, 0.3);
+            
+            /* Progress bars */
+            --progress-bg: #d0e4f0;
+            --progress-xp: linear-gradient(90deg, #42a5f5, #1976d2);
+            --progress-category: linear-gradient(90deg, #66bb6a, #388e3c);
+            --progress-urgent: linear-gradient(90deg, #ef5350, #c62828);
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a2430;
+            --bg-card: #243040;
+            --text-primary: #e8f4f8;
+            --text-secondary: #b0c4d4;
+            --border-color: #4a6a7a;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'VT323', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .pixel-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+        
+        /* Header */
+        header {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .theme-toggle {
+            background: var(--accent-purple);
+            color: white;
+            border: 2px solid var(--text-primary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            border-radius: 4px;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+        
+        .theme-toggle:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        /* Dashboard Stats */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            box-shadow: 4px 4px 0 var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 6px 6px 0 var(--shadow), 0 0 20px var(--glow);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .stat-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            color: var(--accent-gold);
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: var(--progress-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--progress-xp);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .progress-fill.category {
+            background: var(--progress-category);
+        }
+        
+        .progress-fill.urgent {
+            background: var(--progress-urgent);
+        }
+        
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 3px solid var(--border-color);
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .tab-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            border-color: var(--text-primary);
+            box-shadow: 0 0 10px var(--glow);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .category-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .category-icon {
+            font-size: 32px;
+        }
+        
+        .category-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+        }
+        
+        /* Tasks List */
+        .tasks-list {
+            list-style: none;
+            margin-top: var(--spacing-md);
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .task-item:hover {
+            background: var(--accent-blue);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-blue);
+        }
+        
+        .task-text {
+            flex: 1;
+        }
+        
+        .task-priority {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .task-priority.urgent {
+            background: var(--accent-red);
+            color: white;
+        }
+        
+        .task-priority.important {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+        }
+        
+        .task-priority.normal {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .task-xp {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .task-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        /* Daily Quests */
+        .quest-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            border: 3px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow), 0 0 20px rgba(66, 165, 245, 0.2);
+        }
+        
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .quest-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: var(--accent-blue);
+        }
+        
+        .quest-reward {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        /* Character System */
+        .character-container {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            border: 3px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: var(--spacing-xl);
+            box-shadow: 4px 4px 0 var(--shadow), 0 0 30px rgba(126, 87, 194, 0.15);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .character-display {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .character-sprite {
+            font-size: 120px;
+            display: inline-block;
+            animation: characterBounce 2s ease-in-out infinite;
+            filter: drop-shadow(4px 4px 0 var(--shadow));
+        }
+        
+        @keyframes characterBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .character-name-input {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            padding: var(--spacing-sm);
+            font-family: 'VT323', monospace;
+            font-size: 24px;
+            text-align: center;
+            border-radius: 4px;
+            color: var(--text-primary);
+            width: 100%;
+            max-width: 300px;
+            margin: var(--spacing-md) auto;
+            display: block;
+        }
+        
+        .character-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .character-option {
+            background: var(--bg-secondary);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            font-size: 48px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .character-option:hover {
+            transform: scale(1.1);
+            background: var(--accent-purple);
+        }
+        
+        .character-option.selected {
+            border-color: var(--accent-gold);
+            background: var(--accent-gold);
+            box-shadow: 0 0 20px var(--glow);
+        }
+        
+        .character-customization {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+        
+        .custom-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+        }
+        
+        .outfits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .outfit-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .outfit-item:hover {
+            transform: translateY(-4px);
+            background: var(--accent-purple);
+            color: white;
+        }
+        
+        .outfit-item.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .outfit-item.equipped {
+            border-color: var(--accent-gold);
+            background: var(--accent-gold);
+        }
+        
+        .outfit-icon {
+            font-size: 32px;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .outfit-cost {
+            font-size: 14px;
+            color: var(--accent-gold);
+        }
+        
+        /* Shop */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .shop-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+            transition: all 0.3s;
+        }
+        
+        .shop-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 6px 6px 0 var(--shadow), 0 0 30px var(--glow);
+        }
+        
+        .shop-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .shop-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .shop-cost {
+            text-align: center;
+            color: var(--accent-gold);
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .buy-btn {
+            width: 100%;
+            background: var(--accent-blue);
+            color: white;
+            border: 3px solid var(--text-primary);
+            padding: var(--spacing-sm);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .buy-btn:hover {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+        
+        .buy-btn:disabled {
+            background: var(--progress-bg);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        /* Calendar */
+        .calendar-container {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+        }
+        
+        .calendar-events {
+            display: grid;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+        
+        .event-item {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .event-date {
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+        
+        /* Export Button */
+        .export-btn {
+            background: var(--accent-purple);
+            color: white;
+            border: 3px solid var(--text-primary);
+            padding: var(--spacing-md) var(--spacing-lg);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            margin-top: var(--spacing-lg);
+            display: block;
+            width: 100%;
+        }
+        
+        .export-btn:hover {
+            background: var(--accent-gold);
+            color: var(--text-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px var(--shadow);
+        }
+        
+        /* Stats Page */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .stat-category {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 4px 4px 0 var(--shadow);
+        }
+        
+        .stat-category h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent-blue);
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pixel-title {
+                font-size: 10px;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .character-sprite {
+                font-size: 80px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes levelUp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
+        
+        .level-up-animation {
+            animation: levelUp 0.5s ease;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-blue);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 3px solid var(--text-primary);
+            border-radius: 8px;
+            box-shadow: 4px 4px 0 var(--shadow);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+            max-width: 300px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1 class="pixel-title">
+                    <span>📚</span>
+                    <span>ADMIN QUEST RPG</span>
+                </h1>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span id="theme-icon">🌙</span> Changer thème
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">⭐ Niveau</span>
+                    <span class="stat-value" id="player-level">1</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="xp-progress" style="width: 0%">
+                        <span id="xp-text">0 / 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">🔥 Streak</span>
+                    <span class="stat-value" id="streak-count">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill urgent" id="streak-progress" style="width: 0%">
+                        <span id="streak-text">Meilleur: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">✅ Tâches Aujourd'hui</span>
+                    <span class="stat-value" id="tasks-today">0</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">⚠️ Urgentes</span>
+                    <span class="stat-value" id="urgent-tasks">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('quests')">📜 Quêtes</button>
+            <button class="tab-btn" onclick="switchTab('categories')">📋 Catégories</button>
+            <button class="tab-btn" onclick="switchTab('calendar')">📅 Calendrier</button>
+            <button class="tab-btn" onclick="switchTab('character')">👤 Personnage</button>
+            <button class="tab-btn" onclick="switchTab('shop')">🛒 Boutique</button>
+            <button class="tab-btn" onclick="switchTab('stats')">📊 Stats</button>
+        </div>
+
+        <!-- Daily Quests Tab -->
+        <div id="tab-quests" class="tab-content active">
+            <div class="quest-card">
+                <div class="quest-header">
+                    <h2 class="quest-title">⚔️ QUÊTES JOURNALIÈRES</h2>
+                    <span class="quest-reward">+<span id="quest-bonus-xp">50</span> XP Bonus</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="daily-quest-progress" style="width: 0%">
+                        <span id="daily-quest-text">0 / 5</span>
+                    </div>
+                </div>
+                <ul class="tasks-list" id="daily-quests-list">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Categories Tab -->
+        <div id="tab-categories" class="tab-content">
+            <div class="categories-grid" id="categories-container">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Calendar Tab -->
+        <div id="tab-calendar" class="tab-content">
+            <div class="calendar-container">
+                <h2 class="pixel-title">📅 RAPPELS & ÉCHÉANCES</h2>
+                <div class="calendar-events" id="calendar-events">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Character Tab -->
+        <div id="tab-character" class="tab-content">
+            <div class="character-container">
+                <h2 class="pixel-title" style="text-align: center; margin-bottom: 24px;">👤 TON PERSONNAGE</h2>
+                
+                <div class="character-display">
+                    <div class="character-sprite" id="character-sprite">👩‍🎓</div>
+                    <input type="text" class="character-name-input" id="character-name" placeholder="Ton nom" maxlength="20">
+                </div>
+
+                <div class="character-customization">
+                    <div class="custom-section">
+                        <h3 class="pixel-title" style="font-size: 10px;">Choisis ton avatar</h3>
+                        <div class="character-selection">
+                            <div class="character-option selected" onclick="selectCharacter('👩‍🎓')">👩‍🎓</div>
+                            <div class="character-option" onclick="selectCharacter('👨‍🎓')">👨‍🎓</div>
+                            <div class="character-option" onclick="selectCharacter('🧑‍💼')">🧑‍💼</div>
+                            <div class="character-option" onclick="selectCharacter('👩‍💻')">👩‍💻</div>
+                            <div class="character-option" onclick="selectCharacter('🧙‍♀️')">🧙‍♀️</div>
+                            <div class="character-option" onclick="selectCharacter('🧙‍♂️')">🧙‍♂️</div>
+                        </div>
+                    </div>
+
+                    <div class="custom-section">
+                        <h3 class="pixel-title" style="font-size: 10px;">Tenues (Débloquer avec XP)</h3>
+                        <div class="outfits-grid" id="character-outfits">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Tab -->
+        <div id="tab-shop" class="tab-content">
+            <h2 class="pixel-title" style="margin-bottom: 24px;">🛒 BOUTIQUE DE RÉCOMPENSES</h2>
+            <div class="shop-grid" id="shop-items">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="tab-stats" class="tab-content">
+            <h2 class="pixel-title" style="margin-bottom: 24px;">📊 TES STATISTIQUES</h2>
+            <div class="stats-grid">
+                <div class="stat-category">
+                    <h3>⚔️ Général</h3>
+                    <div class="stat-row">
+                        <span>Total XP gagné</span>
+                        <span id="total-xp-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Niveau actuel</span>
+                        <span id="level-stat">1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Tâches complétées</span>
+                        <span id="total-tasks-stat">0</span>
+                    </div>
+                </div>
+
+                <div class="stat-category">
+                    <h3>🔥 Streaks</h3>
+                    <div class="stat-row">
+                        <span>Streak actuel</span>
+                        <span id="current-streak-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Meilleur streak</span>
+                        <span id="longest-streak-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Dernière activité</span>
+                        <span id="last-active-stat">Jamais</span>
+                    </div>
+                </div>
+
+                <div class="stat-category">
+                    <h3>📋 Par Catégorie</h3>
+                    <div id="category-stats">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="stat-category">
+                    <h3>🛒 Boutique</h3>
+                    <div class="stat-row">
+                        <span>Items achetés</span>
+                        <span id="shop-bought-stat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>XP dépensé</span>
+                        <span id="xp-spent-stat">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="export-btn" onclick="exportStats()">
+                📥 Exporter mes statistiques (JSON)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STRUCTURE ====================
+        
+        const CATEGORIES_DATA = {
+            aidesFinancieres: {
+                name: "💰 Aides Financières",
+                icon: "💰",
+                tasks: [
+                    { id: "bourseRenew", name: "Renouveler demande bourse CROUS", priority: "urgent", xp: 30, deadline: "31/01" },
+                    { id: "bourseCROUS", name: "Vérifier statut bourse CROUS", priority: "important", xp: 15 },
+                    { id: "aidesRegionales", name: "Demander aides régionales", priority: "important", xp: 25 },
+                    { id: "aidesCAF", name: "Mettre à jour dossier CAF", priority: "important", xp: 20 },
+                    { id: "aideLogement", name: "Renouveler APL", priority: "urgent", xp: 25, deadline: "Mensuel" },
+                    { id: "aidesTransport", name: "Demander aide transport étudiant", priority: "normal", xp: 15 },
+                    { id: "bourseErasmus", name: "Demander bourse mobilité Erasmus", priority: "normal", xp: 30 },
+                    { id: "fondSolidarite", name: "Consulter fonds solidarité université", priority: "normal", xp: 20 }
+                ]
+            },
+            mutuelle: {
+                name: "🏥 MGEN & Mutuelle",
+                icon: "🏥",
+                tasks: [
+                    { id: "inscriptionMGEN", name: "Inscription MGEN", priority: "urgent", xp: 20 },
+                    { id: "carteVitale", name: "Mettre à jour carte vitale", priority: "important", xp: 15 },
+                    { id: "remboursementsMGEN", name: "Vérifier remboursements MGEN", priority: "normal", xp: 10 },
+                    { id: "attestationMutuelle", name: "Télécharger attestation mutuelle", priority: "normal", xp: 10 },
+                    { id: "contactMGEN", name: "Contacter conseiller MGEN", priority: "important", xp: 15 },
+                    { id: "complementaireSante", name: "Choisir complémentaire santé", priority: "important", xp: 25 },
+                    { id: "declarationMedecin", name: "Déclarer médecin traitant", priority: "important", xp: 15 }
+                ]
+            },
+            medical: {
+                name: "🩺 Rendez-vous Médicaux",
+                icon: "🩺",
+                tasks: [
+                    { id: "rdvGeneraliste", name: "Prendre RDV médecin généraliste", priority: "urgent", xp: 15 },
+                    { id: "rdvDentiste", name: "Prendre RDV dentiste", priority: "important", xp: 15 },
+                    { id: "rdvGynecologue", name: "Prendre RDV gynécologue", priority: "normal", xp: 15 },
+                    { id: "rdvOphtalmo", name: "Prendre RDV ophtalmologue", priority: "normal", xp: 15 },
+                    { id: "rdvDermato", name: "Prendre RDV dermatologue", priority: "normal", xp: 15 },
+                    { id: "vaccins", name: "Vérifier vaccins à jour", priority: "important", xp: 20 },
+                    { id: "bilanSante", name: "Faire bilan santé étudiant", priority: "normal", xp: 25 },
+                    { id: "ordonnance", name: "Demander renouvellement ordonnance", priority: "urgent", xp: 15 },
+                    { id: "rappelRDV", name: "Confirmer RDV à venir", priority: "important", xp: 10 }
+                ]
+            },
+            medicaments: {
+                name: "💊 Médicaments",
+                icon: "💊",
+                tasks: [
+                    { id: "pharmacieOrdonnance", name: "Acheter médicaments ordonnance", priority: "urgent", xp: 15 },
+                    { id: "stockMedocs", name: "Vérifier stock médicaments courants", priority: "normal", xp: 10 },
+                    { id: "datesPeriemption", name: "Vérifier dates péremption", priority: "normal", xp: 10 },
+                    { id: "armoire", name: "Ranger armoire à pharmacie", priority: "normal", xp: 10 },
+                    { id: "pilule", name: "Renouveler ordonnance pilule", priority: "urgent", xp: 15 },
+                    { id: "trousseSecours", name: "Compléter trousse premiers secours", priority: "normal", xp: 15 }
+                ]
+            },
+            demarchesAdmin: {
+                name: "📝 Démarches Administratives",
+                icon: "📝",
+                tasks: [
+                    { id: "carteIdentite", name: "Renouveler carte d'identité", priority: "urgent", xp: 30, deadline: "Avant expiration" },
+                    { id: "passeport", name: "Faire/renouveler passeport", priority: "important", xp: 30 },
+                    { id: "inscriptionListes", name: "S'inscrire listes électorales", priority: "important", xp: 20 },
+                    { id: "changementAdresse", name: "Déclarer changement adresse", priority: "urgent", xp: 20 },
+                    { id: "certificatScolarite", name: "Télécharger certificat scolarité", priority: "important", xp: 10 },
+                    { id: "attestationReussite", name: "Demander attestation réussite", priority: "normal", xp: 15 },
+                    { id: "releveNotes", name: "Récupérer relevés de notes", priority: "normal", xp: 10 },
+                    { id: "assuranceHabitation", name: "Souscrire assurance habitation", priority: "urgent", xp: 25 },
+                    { id: "assuranceRC", name: "Vérifier assurance RC étudiant", priority: "important", xp: 15 },
+                    { id: "ribBancaire", name: "Mettre à jour RIB", priority: "normal", xp: 10 }
+                ]
+            },
+            inscriptions: {
+                name: "📚 Inscriptions & Université",
+                icon: "📚",
+                tasks: [
+                    { id: "inscriptionPedagogique", name: "Inscription pédagogique", priority: "urgent", xp: 20, deadline: "Début semestre" },
+                    { id: "inscriptionAdministrative", name: "Inscription administrative", priority: "urgent", xp: 25, deadline: "Été" },
+                    { id: "choixUE", name: "Choisir UE optionnelles", priority: "important", xp: 15 },
+                    { id: "emploiDuTemps", name: "Vérifier emploi du temps", priority: "important", xp: 10 },
+                    { id: "carteBU", name: "Activer carte bibliothèque", priority: "normal", xp: 10 },
+                    { id: "carteEtudiante", name: "Récupérer carte étudiante", priority: "important", xp: 15 },
+                    { id: "compteCrous", name: "Créer compte Izly/CROUS", priority: "normal", xp: 15 },
+                    { id: "emailUniversitaire", name: "Activer email universitaire", priority: "important", xp: 10 }
+                ]
+            },
+            impots: {
+                name: "💸 Impôts & Taxes",
+                icon: "💸",
+                tasks: [
+                    { id: "declarationImpots", name: "Faire déclaration impôts", priority: "urgent", xp: 30, deadline: "Printemps" },
+                    { id: "taxeHabitation", name: "Vérifier exonération taxe habitation", priority: "important", xp: 20 },
+                    { id: "prelevement", name: "Vérifier prélèvement à la source", priority: "normal", xp: 15 },
+                    { id: "avisImposition", name: "Télécharger avis imposition", priority: "important", xp: 10 },
+                    { id: "numeroFiscal", name: "Récupérer numéro fiscal", priority: "normal", xp: 10 }
+                ]
+            },
+            banque: {
+                name: "🏦 Banque & Budget",
+                icon: "🏦",
+                tasks: [
+                    { id: "ouvertureCompte", name: "Ouvrir compte bancaire étudiant", priority: "urgent", xp: 25 },
+                    { id: "carteBancaire", name: "Commander carte bancaire", priority: "important", xp: 15 },
+                    { id: "virementAuto", name: "Mettre en place virements auto", priority: "normal", xp: 15 },
+                    { id: "budgetMensuel", name: "Faire budget mensuel", priority: "important", xp: 20 },
+                    { id: "releves", name: "Vérifier relevés bancaires", priority: "normal", xp: 10 },
+                    { id: "decouvert", name: "Négocier autorisation découvert", priority: "normal", xp: 20 }
+                ]
+            },
+            logement: {
+                name: "🏠 Logement",
+                icon: "🏠",
+                tasks: [
+                    { id: "bailSignature", name: "Signer bail location", priority: "urgent", xp: 30 },
+                    { id: "etatLieux", name: "Faire état des lieux entrée", priority: "urgent", xp: 20 },
+                    { id: "ouvertureCompteurs", name: "Ouvrir compteurs EDF/eau", priority: "urgent", xp: 25 },
+                    { id: "internet", name: "Souscrire abonnement internet", priority: "important", xp: 20 },
+                    { id: "garantVisale", name: "Demander garantie Visale", priority: "important", xp: 25 },
+                    { id: "mobilierEtudiant", name: "Demander aide mobilier étudiant", priority: "normal", xp: 20 },
+                    { id: "courrier", name: "Mettre en place réexpédition courrier", priority: "normal", xp: 15 }
+                ]
+            },
+            emploi: {
+                name: "💼 Emploi & Stage",
+                icon: "💼",
+                tasks: [
+                    { id: "cvMiseAJour", name: "Mettre à jour CV", priority: "important", xp: 20 },
+                    { id: "lettreMotivation", name: "Rédiger lettre motivation", priority: "important", xp: 20 },
+                    { id: "rechercheStage", name: "Rechercher offres de stage", priority: "important", xp: 15 },
+                    { id: "linkedin", name: "Créer/compléter profil LinkedIn", priority: "normal", xp: 20 },
+                    { id: "conventionStage", name: "Demander convention stage", priority: "urgent", xp: 20 },
+                    { id: "jobEtudiant", name: "Chercher job étudiant", priority: "normal", xp: 15 },
+                    { id: "poleEmploi", name: "S'inscrire Pôle Emploi", priority: "normal", xp: 20 }
+                ]
+            }
+        };
+
+        const SHOP_ITEMS = [
+            { id: "coffee", name: "Café fancy", icon: "☕", cost: 50, category: "petit" },
+            { id: "snack", name: "Pause goûter", icon: "🍪", cost: 60, category: "petit" },
+            { id: "music", name: "Album musique", icon: "🎵", cost: 80, category: "petit" },
+            { id: "book", name: "Livre loisir", icon: "📚", cost: 100, category: "petit" },
+            
+            { id: "cinema", name: "Ciné avec ami·e", icon: "🎬", cost: 200, category: "moyen" },
+            { id: "resto", name: "Resto sympa", icon: "🍜", cost: 250, category: "moyen" },
+            { id: "vetement", name: "Vêtement", icon: "👕", cost: 300, category: "moyen" },
+            { id: "gadget", name: "Petit gadget", icon: "🎧", cost: 350, category: "moyen" },
+            
+            { id: "weekend", name: "Weekend détente", icon: "🏖️", cost: 500, category: "boss" },
+            { id: "concert", name: "Concert/Festival", icon: "🎸", cost: 600, category: "boss" },
+            { id: "tech", name: "Gadget tech", icon: "💻", cost: 700, category: "boss" },
+            { id: "voyage", name: "Petit voyage", icon: "✈️", cost: 800, category: "boss" }
+        ];
+
+        const CHARACTER_OUTFITS = [
+            { id: "casual", name: "Tenue casual", icon: "👕", cost: 100, unlocked: false },
+            { id: "formal", name: "Tenue formelle", icon: "👔", cost: 150, unlocked: false },
+            { id: "sport", name: "Tenue sport", icon: "🏃", cost: 120, unlocked: false },
+            { id: "party", name: "Tenue soirée", icon: "💃", cost: 200, unlocked: false },
+            { id: "study", name: "Tenue étude", icon: "📖", cost: 180, unlocked: false },
+            { id: "superhero", name: "Super-héros", icon: "🦸", cost: 250, unlocked: false }
+        ];
+
+        // ==================== GAME STATE ====================
+        
+        let gameState = {
+            player: {
+                level: 1,
+                currentXP: 0,
+                totalXP: 0,
+                xpToNextLevel: 100
+            },
+            streak: {
+                current: 0,
+                longest: 0,
+                lastActiveDate: null
+            },
+            tasks: {
+                completed: {},
+                totalCompleted: 0,
+                todayCount: 0,
+                lastResetDate: null
+            },
+            dailyQuests: {
+                quests: [],
+                completed: 0,
+                generatedDate: null
+            },
+            character: {
+                type: "👩‍🎓",
+                name: "Étudiante",
+                outfits: [],
+                unlockedOutfits: []
+            },
+            shop: {
+                purchased: [],
+                totalSpent: 0
+            },
+            settings: {
+                theme: "light"
+            }
+        };
+
+        // ==================== INITIALIZATION ====================
+        
+        function init() {
+            loadGameState();
+            checkAndResetDaily();
+            generateDailyQuests();
+            updateUI();
+            renderCategories();
+            renderDailyQuests();
+            renderShop();
+            renderCharacterOutfits();
+            renderCalendar();
+            updateAllStats();
+        }
+
+        function loadGameState() {
+            const saved = localStorage.getItem('adminQuestRPG');
+            if (saved) {
+                try {
+                    const loaded = JSON.parse(saved);
+                    gameState = { ...gameState, ...loaded };
+                    
+                    if (gameState.settings.theme === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        document.getElementById('theme-icon').textContent = '☀️';
+                    }
+                } catch (e) {
+                    console.error('Error loading save:', e);
+                }
+            }
+        }
+
+        function saveGameState() {
+            localStorage.setItem('adminQuestRPG', JSON.stringify(gameState));
+        }
+
+        // ==================== DAILY RESET ====================
+        
+        function checkAndResetDaily() {
+            const today = new Date().toDateString();
+            
+            if (gameState.tasks.lastResetDate !== today) {
+                const lastDate = gameState.tasks.lastResetDate ? new Date(gameState.tasks.lastResetDate) : null;
+                const todayDate = new Date();
+                
+                if (lastDate) {
+                    const diffTime = todayDate - lastDate;
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays > 1) {
+                        gameState.streak.current = 0;
+                    }
+                }
+                
+                gameState.tasks.todayCount = 0;
+                gameState.tasks.lastResetDate = today;
+                gameState.dailyQuests.completed = 0;
+                generateDailyQuests();
+                saveGameState();
+            }
+        }
+
+        // ==================== DAILY QUESTS ====================
+        
+        function generateDailyQuests() {
+            const today = new Date().toDateString();
+            
+            if (gameState.dailyQuests.generatedDate === today) {
+                return;
+            }
+            
+            const allTasks = [];
+            
+            for (let categoryId in CATEGORIES_DATA) {
+                const category = CATEGORIES_DATA[categoryId];
+                category.tasks.forEach(task => {
+                    allTasks.push({
+                        categoryId,
+                        categoryName: category.name,
+                        ...task,
+                        priorityScore: task.priority === 'urgent' ? 3 : task.priority === 'important' ? 2 : 1
+                    });
+                });
+            }
+            
+            const taskCompletionHistory = {};
+            for (let catId in gameState.tasks.completed) {
+                for (let taskId in gameState.tasks.completed[catId]) {
+                    taskCompletionHistory[`${catId}-${taskId}`] = gameState.tasks.completed[catId][taskId];
+                }
+            }
+            
+            allTasks.forEach(task => {
+                const key = `${task.categoryId}-${task.id}`;
+                const lastCompleted = taskCompletionHistory[key] || 0;
+                const daysSince = lastCompleted ? Math.floor((Date.now() - lastCompleted) / (1000 * 60 * 60 * 24)) : 999;
+                
+                task.score = task.priorityScore * 100 + daysSince;
+            });
+            
+            allTasks.sort((a, b) => b.score - a.score);
+            gameState.dailyQuests.quests = allTasks.slice(0, 5);
+            gameState.dailyQuests.completed = 0;
+            gameState.dailyQuests.generatedDate = today;
+            
+            saveGameState();
+        }
+
+        function renderDailyQuests() {
+            const container = document.getElementById('daily-quests-list');
+            container.innerHTML = '';
+            
+            gameState.dailyQuests.quests.forEach((quest, index) => {
+                const isCompleted = gameState.tasks.completed[quest.categoryId]?.[quest.id];
+                
+                const li = document.createElement('li');
+                li.className = `task-item ${isCompleted ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" 
+                           ${isCompleted ? 'checked' : ''} 
+                           onchange="completeQuestTask('${quest.categoryId}', '${quest.id}', ${quest.xp}, '${quest.priority}')">
+                    <span class="task-text">
+                        ${quest.categoryName.split(' ')[0]} ${quest.name}
+                    </span>
+                    <span class="task-priority ${quest.priority}">${quest.priority === 'urgent' ? '🔥' : quest.priority === 'important' ? '⭐' : '✓'}</span>
+                    <span class="task-xp">+${quest.xp} XP</span>
+                `;
+                container.appendChild(li);
+            });
+            
+            updateQuestProgress();
+        }
+
+        function completeQuestTask(categoryId, taskId, xp, priority) {
+            completeTask(categoryId, taskId, xp, priority);
+            
+            let completedCount = 0;
+            gameState.dailyQuests.quests.forEach(quest => {
+                if (gameState.tasks.completed[quest.categoryId]?.[quest.id]) {
+                    completedCount++;
+                }
+            });
+            
+            gameState.dailyQuests.completed = completedCount;
+            
+            if (completedCount === gameState.dailyQuests.quests.length) {
+                const bonusXP = 50;
+                addXP(bonusXP);
+                showNotification(`🎉 Toutes les quêtes complétées ! +${bonusXP} XP Bonus !`);
+            }
+            
+            updateQuestProgress();
+            saveGameState();
+        }
+
+        function updateQuestProgress() {
+            let completed = 0;
+            gameState.dailyQuests.quests.forEach(quest => {
+                if (gameState.tasks.completed[quest.categoryId]?.[quest.id]) {
+                    completed++;
+                }
+            });
+            
+            const total = gameState.dailyQuests.quests.length;
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+            
+            document.getElementById('daily-quest-progress').style.width = percentage + '%';
+            document.getElementById('daily-quest-text').textContent = `${completed} / ${total}`;
+        }
+
+        // ==================== XP & LEVELING ====================
+        
+        function addXP(amount) {
+            gameState.player.currentXP += amount;
+            gameState.player.totalXP += amount;
+            
+            while (gameState.player.currentXP >= gameState.player.xpToNextLevel) {
+                levelUp();
+            }
+            
+            updateUI();
+            saveGameState();
+        }
+
+        function levelUp() {
+            gameState.player.currentXP -= gameState.player.xpToNextLevel;
+            gameState.player.level++;
+            gameState.player.xpToNextLevel = Math.floor(gameState.player.xpToNextLevel * 1.5);
+            
+            showNotification(`🎉 LEVEL UP ! Niveau ${gameState.player.level} atteint !`);
+            
+            document.getElementById('player-level').classList.add('level-up-animation');
+            setTimeout(() => {
+                document.getElementById('player-level').classList.remove('level-up-animation');
+            }, 500);
+        }
+
+        // ==================== TASKS ====================
+        
+        function completeTask(categoryId, taskId, xp, priority) {
+            if (!gameState.tasks.completed[categoryId]) {
+                gameState.tasks.completed[categoryId] = {};
+            }
+            
+            const isCompleted = gameState.tasks.completed[categoryId][taskId];
+            
+            if (!isCompleted) {
+                gameState.tasks.completed[categoryId][taskId] = Date.now();
+                gameState.tasks.totalCompleted++;
+                gameState.tasks.todayCount++;
+                
+                const today = new Date().toDateString();
+                if (gameState.streak.lastActiveDate !== today) {
+                    gameState.streak.current++;
+                    gameState.streak.lastActiveDate = today;
+                    
+                    if (gameState.streak.current > gameState.streak.longest) {
+                        gameState.streak.longest = gameState.streak.current;
+                    }
+                    
+                    const streakBonus = getStreakBonus(gameState.streak.current);
+                    if (streakBonus > 0) {
+                        showNotification(`🔥 Streak ${gameState.streak.current} jours ! +${streakBonus} XP Bonus !`);
+                        xp += streakBonus;
+                    }
+                }
+                
+                addXP(xp);
+                showNotification(`✅ Tâche complétée ! +${xp} XP`);
+            } else {
+                delete gameState.tasks.completed[categoryId][taskId];
+                gameState.tasks.totalCompleted--;
+                gameState.tasks.todayCount--;
+            }
+            
+            renderCategories();
+            renderDailyQuests();
+            updateUI();
+            saveGameState();
+        }
+
+        function getStreakBonus(streakDays) {
+            if (streakDays >= 30) return 100;
+            if (streakDays >= 7) return 30;
+            if (streakDays >= 3) return 10;
+            return 0;
+        }
+
+        // ==================== CHARACTER ====================
+        
+        function selectCharacter(emoji) {
+            gameState.character.type = emoji;
+            document.getElementById('character-sprite').textContent = emoji;
+            
+            document.querySelectorAll('.character-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.textContent === emoji) {
+                    opt.classList.add('selected');
+                }
+            });
+            
+            saveGameState();
+        }
+
+        function toggleOutfit(outfitId, cost) {
+            const index = gameState.character.outfits.indexOf(outfitId);
+            
+            if (index === -1) {
+                if (!gameState.character.unlockedOutfits.includes(outfitId)) {
+                    if (gameState.player.currentXP >= cost) {
+                        gameState.player.currentXP -= cost;
+                        gameState.character.unlockedOutfits.push(outfitId);
+                        gameState.character.outfits.push(outfitId);
+                        showNotification(`✨ Tenue débloquée et équipée !`);
+                    } else {
+                        showNotification(`❌ Pas assez de XP ! (${cost} XP nécessaires)`);
+                        return;
+                    }
+                } else {
+                    gameState.character.outfits.push(outfitId);
+                }
+            } else {
+                gameState.character.outfits.splice(index, 1);
+            }
+            
+            renderCharacterOutfits();
+            updateUI();
+            saveGameState();
+        }
+
+        function renderCharacterOutfits() {
+            const container = document.getElementById('character-outfits');
+            container.innerHTML = '';
+            
+            CHARACTER_OUTFITS.forEach(outfit => {
+                const isUnlocked = gameState.character.unlockedOutfits.includes(outfit.id);
+                const isEquipped = gameState.character.outfits.includes(outfit.id);
+                
+                const div = document.createElement('div');
+                div.className = `outfit-item ${!isUnlocked ? 'locked' : ''} ${isEquipped ? 'equipped' : ''}`;
+                div.onclick = () => {
+                    if (isUnlocked || gameState.player.currentXP >= outfit.cost) {
+                        toggleOutfit(outfit.id, outfit.cost);
+                    }
+                };
+                
+                div.innerHTML = `
+                    <div class="outfit-icon">${outfit.icon}</div>
+                    <div>${outfit.name}</div>
+                    ${!isUnlocked ? `<div class="outfit-cost">${outfit.cost} XP</div>` : ''}
+                    ${isEquipped ? '<div>✓ Équipée</div>' : ''}
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        // ==================== SHOP ====================
+        
+        function buyItem(itemId, cost) {
+            if (gameState.player.currentXP >= cost) {
+                gameState.player.currentXP -= cost;
+                gameState.shop.purchased.push({
+                    id: itemId,
+                    date: Date.now()
+                });
+                gameState.shop.totalSpent += cost;
+                
+                const item = SHOP_ITEMS.find(i => i.id === itemId);
+                showNotification(`🛒 ${item.name} acheté ! Profite bien !`);
+                
+                updateUI();
+                renderShop();
+                saveGameState();
+            } else {
+                showNotification(`❌ Pas assez de XP ! (${cost} XP nécessaires)`);
+            }
+        }
+
+        function renderShop() {
+            const container = document.getElementById('shop-items');
+            container.innerHTML = '';
+            
+            SHOP_ITEMS.forEach(item => {
+                const canAfford = gameState.player.currentXP >= item.cost;
+                
+                const div = document.createElement('div');
+                div.className = 'shop-card';
+                div.innerHTML = `
+                    <div class="shop-icon">${item.icon}</div>
+                    <div class="shop-name">${item.name}</div>
+                    <div class="shop-cost">${item.cost} XP</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${Math.min((gameState.player.currentXP / item.cost) * 100, 100)}%"></div>
+                    </div>
+                    <button class="buy-btn" ${!canAfford ? 'disabled' : ''} onclick="buyItem('${item.id}', ${item.cost})">
+                        Acheter
+                    </button>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        // ==================== CATEGORIES RENDERING ====================
+        
+        function renderCategories() {
+            const container = document.getElementById('categories-container');
+            container.innerHTML = '';
+            
+            for (let categoryId in CATEGORIES_DATA) {
+                const category = CATEGORIES_DATA[categoryId];
+                const div = document.createElement('div');
+                div.className = 'category-card';
+                
+                let totalTasks = category.tasks.length;
+                let completedTasks = 0;
+                
+                let tasksHTML = '';
+                category.tasks.forEach(task => {
+                    const isCompleted = gameState.tasks.completed[categoryId]?.[task.id];
+                    if (isCompleted) completedTasks++;
+                    
+                    tasksHTML += `
+                        <li class="task-item ${isCompleted ? 'completed' : ''}">
+                            <input type="checkbox" class="task-checkbox" 
+                                   ${isCompleted ? 'checked' : ''} 
+                                   onchange="completeTask('${categoryId}', '${task.id}', ${task.xp}, '${task.priority}')">
+                            <span class="task-text">${task.name}</span>
+                            <span class="task-priority ${task.priority}">${task.priority === 'urgent' ? '🔥' : task.priority === 'important' ? '⭐' : '✓'}</span>
+                            <span class="task-xp">+${task.xp} XP</span>
+                        </li>
+                    `;
+                });
+                
+                const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+                
+                div.innerHTML = `
+                    <div class="category-header">
+                        <span class="category-icon">${category.icon}</span>
+                        <h3 class="category-title">${category.name}</h3>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill category" style="width: ${progress}%">
+                            ${Math.round(progress)}%
+                        </div>
+                    </div>
+                    <ul class="tasks-list">
+                        ${tasksHTML}
+                    </ul>
+                `;
+                
+                container.appendChild(div);
+            }
+        }
+
+        // ==================== CALENDAR ====================
+        
+        function renderCalendar() {
+            const container = document.getElementById('calendar-events');
+            container.innerHTML = '';
+            
+            const urgentTasks = [];
+            for (let categoryId in CATEGORIES_DATA) {
+                CATEGORIES_DATA[categoryId].tasks.forEach(task => {
+                    if (task.deadline && !gameState.tasks.completed[categoryId]?.[task.id]) {
+                        urgentTasks.push({
+                            ...task,
+                            category: CATEGORIES_DATA[categoryId].name
+                        });
+                    }
+                });
+            }
+            
+            if (urgentTasks.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Aucune échéance urgente 🎉</div>';
+                return;
+            }
+            
+            urgentTasks.forEach(task => {
+                const div = document.createElement('div');
+                div.className = 'event-item';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight: bold;">${task.name}</div>
+                        <div style="font-size: 16px; color: var(--text-secondary);">${task.category}</div>
+                    </div>
+                    <div class="event-date">📅 ${task.deadline}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // ==================== UI UPDATES ====================
+        
+        function updateUI() {
+            document.getElementById('player-level').textContent = gameState.player.level;
+            const xpPercent = (gameState.player.currentXP / gameState.player.xpToNextLevel) * 100;
+            document.getElementById('xp-progress').style.width = xpPercent + '%';
+            document.getElementById('xp-text').textContent = `${Math.floor(gameState.player.currentXP)} / ${gameState.player.xpToNextLevel}`;
+            
+            document.getElementById('streak-count').textContent = gameState.streak.current;
+            const streakPercent = Math.min((gameState.streak.current / 30) * 100, 100);
+            document.getElementById('streak-progress').style.width = streakPercent + '%';
+            document.getElementById('streak-text').textContent = `Meilleur: ${gameState.streak.longest}`;
+            
+            document.getElementById('tasks-today').textContent = gameState.tasks.todayCount;
+            
+            let urgentCount = 0;
+            for (let categoryId in CATEGORIES_DATA) {
+                CATEGORIES_DATA[categoryId].tasks.forEach(task => {
+                    if (task.priority === 'urgent' && !gameState.tasks.completed[categoryId]?.[task.id]) {
+                        urgentCount++;
+                    }
+                });
+            }
+            document.getElementById('urgent-tasks').textContent = urgentCount;
+            
+            document.getElementById('character-sprite').textContent = gameState.character.type;
+            document.getElementById('character-name').value = gameState.character.name;
+            
+            renderShop();
+        }
+
+        function updateAllStats() {
+            document.getElementById('total-xp-stat').textContent = Math.floor(gameState.player.totalXP);
+            document.getElementById('level-stat').textContent = gameState.player.level;
+            document.getElementById('total-tasks-stat').textContent = gameState.tasks.totalCompleted;
+            
+            document.getElementById('current-streak-stat').textContent = gameState.streak.current;
+            document.getElementById('longest-streak-stat').textContent = gameState.streak.longest;
+            document.getElementById('last-active-stat').textContent = gameState.streak.lastActiveDate || 'Jamais';
+            
+            document.getElementById('shop-bought-stat').textContent = gameState.shop.purchased.length;
+            document.getElementById('xp-spent-stat').textContent = gameState.shop.totalSpent;
+            
+            const categoryStatsContainer = document.getElementById('category-stats');
+            categoryStatsContainer.innerHTML = '';
+            for (let categoryId in CATEGORIES_DATA) {
+                let completed = 0;
+                const total = CATEGORIES_DATA[categoryId].tasks.length;
+                if (gameState.tasks.completed[categoryId]) {
+                    completed = Object.keys(gameState.tasks.completed[categoryId]).length;
+                }
+                
+                const div = document.createElement('div');
+                div.className = 'stat-row';
+                div.innerHTML = `
+                    <span>${CATEGORIES_DATA[categoryId].name.split(' ')[0]}</span>
+                    <span>${completed} / ${total}</span>
+                `;
+                categoryStatsContainer.appendChild(div);
+            }
+        }
+
+        // ==================== TAB NAVIGATION ====================
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ==================== THEME TOGGLE ====================
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            
+            gameState.settings.theme = newTheme;
+            saveGameState();
+        }
+
+        // ==================== EXPORT STATS ====================
+        
+        function exportStats() {
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                player: gameState.player,
+                streak: gameState.streak,
+                tasks: {
+                    totalCompleted: gameState.tasks.totalCompleted,
+                    todayCount: gameState.tasks.todayCount
+                },
+                shop: gameState.shop,
+                character: gameState.character
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `admin-quest-stats-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            
+            showNotification('📥 Statistiques exportées !');
+        }
+
+        // ==================== NOTIFICATIONS ====================
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Character name update
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameInput = document.getElementById('character-name');
+            if (nameInput) {
+                nameInput.value = gameState.character.name;
+                nameInput.addEventListener('change', (e) => {
+                    gameState.character.name = e.target.value || 'Étudiante';
+                    saveGameState();
+                });
+            }
+        });
+
+        // ==================== START APP ====================
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
