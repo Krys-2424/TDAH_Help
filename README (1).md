@@ -2,8 +2,6 @@
 
 **Transforme tes tâches ménagères en aventure RPG pixel art !**
 
-Inspiré de Stardew Valley et des jeux cosy farming, Home Quest RPG gamifie entièrement ta maison avec un système de progression, quêtes, récompenses et même un animal de compagnie !
-
 ---
 
 ## 📦 **Fichiers Livrés**
